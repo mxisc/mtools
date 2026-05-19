@@ -1,0 +1,19 @@
+{
+  "name": "PortDesk",
+  "outputfilename": "portdesk",
+  "frontend:install": "npm install",
+  "frontend:build": "npm run build",
+  "frontend:dev:watcher": "npm run dev",
+  "frontend:dev:serverUrl": "http://localhost:5173",
+  "author": {
+    "name": "PortDesk",
+    "email": ""
+  },
+  "Info": {
+    "companyName": "PortDesk",
+    "productName": "PortDesk",
+    "productVersion": "1.0.0",
+    "copyright": "Copyright(c) 2024",
+    "comments": "PortDesk - 网络安全工具集"
+  }
+}

@@ -1,0 +1,77 @@
+stages:
+  - build
+  - package
+
+variables:
+  GO_VERSION: "1.23"
+
+.wails_base:
+  image: golang:${GO_VERSION}-bookworm
+  before_script:
+    - apt-get update && apt-get install -y --no-install-recommends libgtk-3-dev libwebkit2gtk-4.1-dev nodejs npm
+    - npm install -g npm@latest
+    - cd frontend && npm install && cd ..
+    - go install github.com/wailsapp/wails/v2/cmd/wails@latest
+    - export PATH="$PATH:$HOME/go/bin"
+
+build-linux-amd64:
+  extends: .wails_base
+  stage: build
+  tags:
+    - docker
+  script:
+    - wails build -platform linux/amd64
+  artifacts:
+    paths:
+      - build/bin/portdesk
+      - build/bin/portdesk.deb
+    expire_in: 7 days
+
+build-windows-amd64:
+  extends: .wails_base
+  stage: build
+  tags:
+    - docker
+  script:
+    - apt-get install -y --no-install-recommends gcc-mingw-w64-x86-64
+    - wails build -platform windows/amd64
+  artifacts:
+    paths:
+      - build/bin/portdesk.exe
+    expire_in: 7 days
+
+build-macos-universal:
+  stage: build
+  tags:
+    - macos
+  image: ""
+  before_script:
+    - go version || brew install go
+    - npm install -g npm@latest
+    - cd frontend && npm install && cd ..
+    - go install github.com/wailsapp/wails/v2/cmd/wails@latest
+    - export PATH="$PATH:$HOME/go/bin"
+  script:
+    - wails build -platform darwin/universal
+  artifacts:
+    paths:
+      - build/bin/PortDesk.app
+    expire_in: 7 days
+  rules:
+    - if: '$CI_RUNNER_OS == "macOS"'
+
+package-release:
+  stage: package
+  image: alpine:latest
+  tags:
+    - docker
+  rules:
+    - if: '$CI_COMMIT_TAG'
+  script:
+    - mkdir -p release
+    - cp -r build/bin/* release/ || true
+    - cd release && ls -la
+  artifacts:
+    paths:
+      - release/
+    expire_in: 30 days
