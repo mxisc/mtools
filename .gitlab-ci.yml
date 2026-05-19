@@ -38,27 +38,6 @@ build-windows-amd64:
       - build/bin/portdesk.exe
     expire_in: 30 days
 
-build-macos-universal:
-  stage: build
-  tags:
-    - macos
-  before_script:
-    - go version || brew install go
-    - npm install -g npm@latest
-    - cd frontend && npm install && cd ..
-    - go install github.com/wailsapp/wails/v2/cmd/wails@latest
-    - export PATH="$PATH:$HOME/go/bin"
-  script:
-    - wails build -platform darwin/universal
-  artifacts:
-    paths:
-      - build/bin/PortDesk.app
-    expire_in: 30 days
-  allow_failure: true
-  rules:
-    - if: '$CI_COMMIT_TAG'
-      when: manual
-
 package-release:
   stage: package
   image: alpine:latest
