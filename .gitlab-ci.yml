@@ -19,8 +19,6 @@ variables:
 build-linux-amd64:
   extends: .wails_base
   stage: build
-  tags:
-    - docker
   script:
     - wails build -platform linux/amd64
   artifacts:
@@ -32,8 +30,6 @@ build-linux-amd64:
 build-windows-amd64:
   extends: .wails_base
   stage: build
-  tags:
-    - docker
   script:
     - apt-get install -y --no-install-recommends gcc-mingw-w64-x86-64
     - wails build -platform windows/amd64
@@ -64,8 +60,6 @@ build-macos-universal:
 package-release:
   stage: package
   image: alpine:latest
-  tags:
-    - docker
   rules:
     - if: '$CI_COMMIT_TAG'
   script:
