@@ -54,8 +54,10 @@ build-macos-universal:
     paths:
       - build/bin/PortDesk.app
     expire_in: 30 days
+  allow_failure: true
   rules:
     - if: '$CI_COMMIT_TAG'
+      when: manual
 
 package-release:
   stage: package
