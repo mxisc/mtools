@@ -13,6 +13,8 @@ variables:
     - cd frontend && npm install && cd ..
     - go install github.com/wailsapp/wails/v2/cmd/wails@latest
     - export PATH="$PATH:$HOME/go/bin"
+  rules:
+    - if: '$CI_COMMIT_TAG'
 
 build-linux-amd64:
   extends: .wails_base
@@ -25,7 +27,7 @@ build-linux-amd64:
     paths:
       - build/bin/portdesk
       - build/bin/portdesk.deb
-    expire_in: 7 days
+    expire_in: 30 days
 
 build-windows-amd64:
   extends: .wails_base
@@ -38,7 +40,7 @@ build-windows-amd64:
   artifacts:
     paths:
       - build/bin/portdesk.exe
-    expire_in: 7 days
+    expire_in: 30 days
 
 build-macos-universal:
   stage: build
@@ -56,9 +58,9 @@ build-macos-universal:
   artifacts:
     paths:
       - build/bin/PortDesk.app
-    expire_in: 7 days
+    expire_in: 30 days
   rules:
-    - if: '$CI_RUNNER_OS == "macOS"'
+    - if: '$CI_COMMIT_TAG'
 
 package-release:
   stage: package
@@ -69,9 +71,10 @@ package-release:
     - if: '$CI_COMMIT_TAG'
   script:
     - mkdir -p release
-    - cp -r build/bin/* release/ || true
-    - cd release && ls -la
+    - cp -r build/bin/* release/ 2>/dev/null || true
+    - echo "=== Release $CI_COMMIT_TAG Artifacts ==="
+    - ls -lh release/
   artifacts:
     paths:
       - release/
-    expire_in: 30 days
+    expire_in: 90 days
