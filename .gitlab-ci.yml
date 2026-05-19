@@ -46,7 +46,6 @@ build-macos-universal:
   stage: build
   tags:
     - macos
-  image: ""
   before_script:
     - go version || brew install go
     - npm install -g npm@latest
