@@ -10,12 +10,20 @@ import (
 	"time"
 )
 
+type IPVersion string
+
+const (
+	IPv4 IPVersion = "ipv4"
+	IPv6 IPVersion = "ipv6"
+)
+
 type ScanOptions struct {
 	Host      string
 	StartPort int
 	EndPort   int
 	Workers   int
 	Timeout   time.Duration
+	IPVersion IPVersion
 }
 
 type OpenPort struct {
@@ -54,6 +62,12 @@ func (o ScanOptions) Validate() error {
 	if o.Timeout <= 0 {
 		return errors.New("超时时间必须大于 0")
 	}
+	if o.IPVersion == "" {
+		o.IPVersion = IPv4
+	}
+	if o.IPVersion != IPv4 && o.IPVersion != IPv6 {
+		return errors.New("IP 版本必须为 ipv4 或 ipv6")
+	}
 
 	return nil
 }
@@ -83,7 +97,7 @@ func Scan(ctx context.Context, opts ScanOptions, onProgress func(Progress)) ([]O
 				default:
 				}
 
-				results <- scanPort(opts.Host, port, opts.Timeout)
+				results <- scanPort(opts.Host, port, opts.Timeout, opts.IPVersion)
 			}
 		}()
 	}
@@ -137,10 +151,17 @@ func Scan(ctx context.Context, opts ScanOptions, onProgress func(Progress)) ([]O
 	return openPorts, nil
 }
 
-func scanPort(host string, port int, timeout time.Duration) workerResult {
+func scanPort(host string, port int, timeout time.Duration, ipVersion IPVersion) workerResult {
+	var network string
+	if ipVersion == IPv6 {
+		network = "tcp6"
+	} else {
+		network = "tcp4"
+	}
+
 	address := net.JoinHostPort(host, fmt.Sprintf("%d", port))
 	start := time.Now()
-	conn, err := net.DialTimeout("tcp", address, timeout)
+	conn, err := net.DialTimeout(network, address, timeout)
 	if err != nil {
 		return workerResult{port: port}
 	}

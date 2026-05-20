@@ -34,7 +34,8 @@ declare global {
             startPort: number,
             endPort: number,
             workers: number,
-            timeoutMs: number
+            timeoutMs: number,
+            ipVersion: string
           ) => Promise<any>
         }
       }
@@ -86,7 +87,8 @@ export async function runPortScan(
   startPort: number,
   endPort: number,
   workers: number,
-  timeoutMs: number
+  timeoutMs: number,
+  ipVersion: string
 ): Promise<any> {
   const app = getApp()
   if (!app) {
@@ -97,7 +99,8 @@ export async function runPortScan(
     startPort,
     endPort,
     workers,
-    timeoutMs
+    timeoutMs,
+    ipVersion
   )
 }
 

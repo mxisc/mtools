@@ -136,7 +136,7 @@ func (a *App) RunWebCheck(target string) (*WebCheckResult, error) {
 	return toWebCheckResult(report), nil
 }
 
-func (a *App) RunPortScan(host string, startPort int, endPort int, workers int, timeoutMs int) (*PortScanResult, error) {
+func (a *App) RunPortScan(host string, startPort int, endPort int, workers int, timeoutMs int, ipVersion string) (*PortScanResult, error) {
 	if host == "" || startPort <= 0 || endPort <= 0 {
 		return nil, fmt.Errorf("参数不正确")
 	}
@@ -172,6 +172,7 @@ func (a *App) RunPortScan(host string, startPort int, endPort int, workers int, 
 		EndPort:   endPort,
 		Workers:   workers,
 		Timeout:   time.Duration(timeoutMs) * time.Millisecond,
+		IPVersion: scanner.IPVersion(ipVersion),
 	}
 
 	progressHandler := func(p scanner.Progress) {

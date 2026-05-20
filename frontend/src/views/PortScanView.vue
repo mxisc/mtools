@@ -87,6 +87,17 @@
               required
             />
           </div>
+          <div class="field-group">
+            <label for="ipVersion">IP 版本</label>
+            <select
+              id="ipVersion"
+              v-model="form.ipVersion"
+              class="select-input"
+            >
+              <option value="ipv4">IPv4</option>
+              <option value="ipv6">IPv6</option>
+            </select>
+          </div>
         </div>
       </div>
 
@@ -202,6 +213,7 @@ interface ScanForm {
   endPort: number
   workers: number
   timeout: number
+  ipVersion: 'ipv4' | 'ipv6'
 }
 
 const wailsAvailable = ref(false)
@@ -221,6 +233,7 @@ const form = ref<ScanForm>({
   endPort: 1024,
   workers: 100,
   timeout: 1000,
+  ipVersion: 'ipv4',
 })
 
 const isScanning = ref(false)
@@ -279,7 +292,8 @@ async function startScan() {
       form.value.startPort,
       form.value.endPort,
       form.value.workers,
-      form.value.timeout
+      form.value.timeout,
+      form.value.ipVersion
     )
 
     scanResult.value = data as PortScanResult
@@ -437,6 +451,30 @@ async function handleStop() {
 
 .scan-params .field-group {
   flex: 1;
+}
+
+.select-input {
+  padding: 10px 14px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: var(--radius-sm);
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--text-primary);
+  font-size: 0.95rem;
+  font-weight: 500;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  cursor: pointer;
+  outline: none;
+}
+
+.select-input:focus {
+  border-color: var(--accent-blue);
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+}
+
+.select-input option {
+  background: var(--bg-card);
+  color: var(--text-primary);
+  padding: 8px;
 }
 
 .config-actions {
