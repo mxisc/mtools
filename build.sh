@@ -64,10 +64,10 @@ $NOTES"
     echo ""
     echo "========================================="
     echo "  Tag $NEW_TAG 已推送至远程仓库"
-    echo "  GitLab CI 流水线已自动触发"
+    echo "  GitHub Actions 流水线已自动触发"
     echo "========================================="
     echo ""
-    echo "查看流水线进度: https://gitlab.com/mxisc/mtools/-/pipelines"
+    echo "查看流水线进度: https://github.com/mxisc/mtools/actions"
     ;;
 
   2)
